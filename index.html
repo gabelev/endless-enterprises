@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Endless Enterprises</title>
+<meta name="description" content="Infinite objects. Generated on demand. Satisfy every whim.">
+<style>
+  :root {
+    --page: #eaeded;
+    --bar: #161616;
+    --bar2: #2b2b2b;
+    --card: #ffffff;
+    --ink: #0f1111;
+    --muted: #565959;
+    --rule: #d5d9d9;
+    --link: #1a5fb4;
+    --accent: #2f7d4f;
+    --plate: #181818;
+    --sans: "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--page); color: var(--ink); font: 14px/1.45 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  button, input { font: inherit; }
+
+  /* top bar */
+  .top { background: var(--bar); color: #fff; }
+  .top .in { display: flex; align-items: center; gap: 16px; padding: 10px 20px; }
+  .mark { font-weight: 700; font-size: 18px; letter-spacing: -.01em; white-space: nowrap; padding: 4px 6px; border: 1px solid transparent; }
+  .mark:hover { border-color: #fff; }
+  .search { flex: 1; display: flex; height: 40px; border-radius: 6px; overflow: hidden; background: #fff; }
+  .search select { border: 0; background: #e6e6e6; color: var(--ink); padding: 0 10px; font-size: 12px; }
+  .search input { flex: 1; border: 0; padding: 0 12px; outline: none; color: var(--ink); min-width: 0; }
+  .search button { border: 0; background: var(--accent); color: #fff; padding: 0 16px; cursor: pointer; font-weight: 600; }
+  .util { display: flex; gap: 18px; align-items: center; white-space: nowrap; font-size: 13px; }
+  .util small { display: block; font-size: 11px; color: #ccc; line-height: 1.1; }
+  .util b { font-size: 14px; }
+  .cart b { font-size: 16px; }
+
+  .sub { background: var(--bar2); color: #fff; font-size: 13px; }
+  .sub .in { display: flex; gap: 20px; padding: 8px 20px; overflow-x: auto; white-space: nowrap; }
+  .sub a { opacity: .92; }
+  .sub a:hover { text-decoration: underline; }
+  .sub .note { margin-left: auto; font-family: var(--mono); font-size: 12px; color: #bbb; }
+
+  /* banner */
+  .banner { background: linear-gradient(180deg, #d9dede 0%, var(--page) 100%); }
+  .banner .in { max-width: 1440px; margin: 0 auto; padding: 40px 20px 32px; display: flex; justify-content: space-between; align-items: end; gap: 32px; flex-wrap: wrap; }
+  .banner h1 { font-size: clamp(30px, 4.4vw, 52px); line-height: 1.04; letter-spacing: -.025em; font-weight: 700; }
+  .banner .lede { max-width: 40ch; font-size: 17px; line-height: 1.4; color: var(--ink); }
+  .banner .fine { max-width: 46ch; margin-top: 10px; color: var(--muted); font-size: 12.5px; }
+
+  main { max-width: 1440px; margin: 0 auto; padding: 0 20px 48px; }
+
+  .results { background: var(--card); padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,.08); font-size: 13px; }
+  .results b { color: #b12704; font-weight: 600; }
+  .results .sort { color: var(--muted); }
+
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .item { background: var(--card); display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+  .plate { background: var(--plate); aspect-ratio: 4 / 5; overflow: hidden; }
+  .plate img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .meta { padding: 12px 14px 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .tag { align-self: flex-start; background: var(--bar); color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 3px; margin-bottom: 4px; }
+  .name { color: var(--link); font-size: 16px; line-height: 1.3; }
+  .name:hover { text-decoration: underline; color: #c45500; }
+  .code { font: 11px var(--mono); color: var(--muted); }
+  .spec { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .price { margin-top: 8px; font-size: 18px; }
+  .price small { font-size: 12px; color: var(--muted); display: block; }
+  .ship { font-size: 12.5px; color: var(--muted); }
+  .buy { margin-top: auto; padding-top: 12px; }
+  .buy button { width: 100%; border: 1px solid var(--rule); background: #f3f3f3; color: #8a8a8a; border-radius: 20px; padding: 8px 0; font-size: 13px; cursor: not-allowed; }
+
+  .empty { display: none; background: var(--card); padding: 24px; color: var(--muted); }
+
+  .about { margin-top: 32px; background: var(--card); padding: 24px; box-shadow: 0 1px 2px rgba(0,0,0,.08); display: grid; grid-template-columns: 220px 1fr; gap: 24px; }
+  .about h2 { font-size: 16px; }
+  .about p { max-width: 70ch; }
+  .about p + p { margin-top: 10px; }
+
+  .toplink { display: block; text-align: center; background: #37475a1a; padding: 14px; font-size: 13px; margin-top: 32px; }
+  .toplink:hover { background: #37475a2e; }
+  footer { background: var(--bar); color: #bbb; font: 12px/1.7 var(--mono); }
+  footer .in { max-width: 1440px; margin: 0 auto; padding: 28px 20px 36px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { color: #ddd; text-decoration: underline; }
+
+  @media (max-width: 1100px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 820px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .top .in { flex-wrap: wrap; }
+    .search { order: 3; flex-basis: 100%; }
+    .util { margin-left: auto; }
+    .about { grid-template-columns: 1fr; gap: 8px; }
+  }
+  @media (max-width: 520px) {
+    .grid { grid-template-columns: 1fr; }
+    .util .acct { display: none; }
+    .search select { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="in">
+    <a class="mark" href="/">Endless Enterprises</a>
+    <form class="search" role="search" onsubmit="return false">
+      <select aria-label="Department"><option>All</option><option>Bath</option><option>Music</option><option>Audio</option></select>
+      <input id="q" type="search" placeholder="Search Endless Enterprises" aria-label="Search">
+      <button type="submit">Search</button>
+    </form>
+    <div class="util">
+      <a class="acct" href="#about"><small>Hello</small><b>About</b></a>
+      <a href="mailto:hello@endless.enterprises"><small>Questions</small><b>Contact</b></a>
+      <span class="cart"><small>Cart</small><b>0</b></span>
+    </div>
+  </div>
+</div>
+
+<div class="sub">
+  <div class="in">
+    <a href="#catalog">All</a>
+    <a href="#catalog" data-dept="Bath">Bath</a>
+    <a href="#catalog" data-dept="Music">Music</a>
+    <a href="#catalog" data-dept="Audio">Audio</a>
+    <a href="#catalog">New arrivals</a>
+    <span class="note">STORE OPENING SOON</span>
+  </div>
+</div>
+
+<section class="banner">
+  <div class="in">
+    <h1>Infinite objects.<br>Generated on demand.<br>Satisfy every whim.</h1>
+    <div><p class="lede">New from AI models trained on all of human knowledge: every object possible, designed for every human imaginable, just for you.</p>
+    <p class="fine">Objects approximate the things they are named for. They are solid and are not functional unless stated.</p></div>
+  </div>
+</section>
+
+<main id="catalog">
+  <div class="results">
+    <span id="count">1-3 of <b>3</b> results</span>
+    <span class="sort">Sort by: Newest</span>
+  </div>
+
+  <div class="grid" id="grid">
+    <article class="item" data-dept="Bath">
+      <div class="plate"><img src="img/shampoo-bottle.jpg" alt="Render of a pump-top shampoo bottle"></div>
+      <div class="meta">
+        <span class="tag">New</span>
+        <a class="name" href="#">A shampoo bottle.</a>
+        <span class="code">Item No. 0001 &middot; Bath</span>
+        <span class="spec">Printed plastic. Solid. Does not hold liquid. Pump does not move.</span>
+        <div class="price">Price on release<small>Made to order</small></div>
+        <div class="buy"><button disabled>Not yet available</button></div>
+      </div>
+    </article>
+
+    <article class="item" data-dept="Music">
+      <div class="plate"><img src="img/acoustic-guitar.jpg" alt="Render of an acoustic guitar"></div>
+      <div class="meta">
+        <span class="tag">New</span>
+        <a class="name" href="#">An acoustic guitar.</a>
+        <span class="code">Item No. 0002 &middot; Music</span>
+        <span class="spec">Printed plastic. Solid. Reduced scale. Not playable. Strings are not tensioned.</span>
+        <div class="price">Price on release<small>Made to order</small></div>
+        <div class="buy"><button disabled>Not yet available</button></div>
+      </div>
+    </article>
+
+    <article class="item" data-dept="Audio">
+      <div class="plate"><img src="img/headphones.jpg" alt="Render of over-ear headphones"></div>
+      <div class="meta">
+        <span class="tag">New</span>
+        <a class="name" href="#">A pair of headphones.</a>
+        <span class="code">Item No. 0003 &middot; Audio</span>
+        <span class="spec">Printed plastic. Solid. No audio components. Does not adjust.</span>
+        <div class="price">Price on release<small>Made to order</small></div>
+        <div class="buy"><button disabled>Not yet available</button></div>
+      </div>
+    </article>
+  </div>
+  <div class="empty" id="empty">No results. More objects are being generated.</div>
+
+  <section class="about" id="about">
+    <h2>About Endless Enterprises</h2>
+    <div>
+      <p>Endless Enterprises sells approximations of everyday objects. Products are designed, listed, and priced by AI agents. A person reviews each object before it is offered for sale.</p>
+      <p>Items are made to order by a third-party print service and shipped directly to the buyer. Product images are renders of the model that is printed.</p>
+      <p>Endless Enterprises is an artwork by Putu Gabriel Lee Levine.</p>
+    </div>
+  </section>
+</main>
+
+<a class="toplink" href="#">Back to top</a>
+<footer>
+  <div class="in">
+    <span>&copy; 2026 Endless Enterprises</span>
+    <a href="mailto:hello@endless.enterprises">hello@endless.enterprises</a>
+  </div>
+</footer>
+
+<script>
+  const q = document.getElementById('q');
+  const sel = document.querySelector('.search select');
+  const items = [...document.querySelectorAll('.item')];
+  const count = document.getElementById('count');
+  const empty = document.getElementById('empty');
+  function apply() {
+    const term = q.value.trim().toLowerCase();
+    const dept = sel.value;
+    let n = 0;
+    items.forEach(el => {
+      const ok = (dept === 'All' || el.dataset.dept === dept) &&
+                 (!term || el.textContent.toLowerCase().includes(term));
+      el.style.display = ok ? '' : 'none';
+      if (ok) n++;
+    });
+    count.innerHTML = n ? `1-${n} of <b>${n}</b> results` : `0 results`;
+    empty.style.display = n ? 'none' : 'block';
+  }
+  q.addEventListener('input', apply);
+  sel.addEventListener('change', apply);
+  document.querySelectorAll('.sub a[data-dept]').forEach(a =>
+    a.addEventListener('click', () => { sel.value = a.dataset.dept; apply(); }));
+</script>
+</body>
+</html>
